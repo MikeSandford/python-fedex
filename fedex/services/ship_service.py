@@ -26,14 +26,14 @@ class FedexProcessShipmentRequest(FedexBaseService):
         self._config_obj = config_obj
         
         # Holds version info for the VersionId SOAP object.
-        self._version_info = {'service_id': 'ship', 'major': '7', 
+        self._version_info = {'service_id': 'ship', 'major': '12', 
                              'intermediate': '0', 'minor': '0'}
         
         self.RequestedShipment = None
         """@ivar: Holds the RequestedShipment WSDL object."""
         # Call the parent FedexBaseService class for basic setup work.
         super(FedexProcessShipmentRequest, self).__init__(self._config_obj, 
-                                                         'ShipService_v7.wsdl',
+                                                         'ShipService_v12.wsdl',
                                                          *args, **kwargs)
         
     def _prepare_wsdl_objects(self):
@@ -71,10 +71,17 @@ class FedexProcessShipmentRequest(FedexBaseService):
         self.RequestedShipment.Recipient = RecipientParty
                 
         Payor = self.client.factory.create('Payor')
+        ResponsibleParty = self.client.factory.create("Party")
+        
         # Grab the account number from the FedexConfig object by default.
-        Payor.AccountNumber = self._config_obj.account_number
+        ResponsibleParty.AccountNumber = self._config_obj.account_number
+        
+        Payor.ResponsibleParty = ResponsibleParty
+        
         # Assume US.
-        Payor.CountryCode = 'US'
+        Address = self.client.factory.create("Address")
+        Address.CountryCode = "US"
+        ResponsibleParty.Address = Address
         
         ShippingChargesPayment = self.client.factory.create('Payment')
         ShippingChargesPayment.Payor = Payor
@@ -159,7 +166,7 @@ class FedexDeleteShipmentRequest(FedexBaseService):
         self._config_obj = config_obj
         
         # Holds version info for the VersionId SOAP object.
-        self._version_info = {'service_id': 'ship', 'major': '7', 
+        self._version_info = {'service_id': 'ship', 'major': '10', 
                              'intermediate': '0', 'minor': '0'}
         self.DeletionControlType = None
         """@ivar: Holds the DeletrionControlType WSDL object."""
@@ -167,7 +174,7 @@ class FedexDeleteShipmentRequest(FedexBaseService):
         """@ivar: Holds the TrackingId WSDL object."""
         # Call the parent FedexBaseService class for basic setup work.
         super(FedexDeleteShipmentRequest, self).__init__(self._config_obj, 
-                                                'ShipService_v7.wsdl',
+                                                'ShipService_v10.wsdl',
                                                 *args, **kwargs)
 
     def _prepare_wsdl_objects(self):

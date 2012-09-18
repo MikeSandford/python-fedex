@@ -25,14 +25,14 @@ class FedexRateServiceRequest(FedexBaseService):
         self._config_obj = config_obj
         
         # Holds version info for the VersionId SOAP object.
-        self._version_info = {'service_id': 'crs', 'major': '8', 
+        self._version_info = {'service_id': 'crs', 'major': '10', 
                              'intermediate': '0', 'minor': '0'}
         
         self.RequestedShipment = None
         """@ivar: Holds the RequestedShipment WSDL object."""
         # Call the parent FedexBaseService class for basic setup work.
         super(FedexRateServiceRequest, self).__init__(self._config_obj, 
-                                                         'RateService_v8.wsdl',
+                                                         'RateService_v10.wsdl',
                                                          *args, **kwargs)
         self.ClientDetail.Region = config_obj.express_region_code
         
@@ -121,6 +121,7 @@ class FedexRateServiceRequest(FedexBaseService):
             this ShipmentRequest object. See examples/create_shipment.py for
             more details.
         """
+        package_item.SequenceNumber = 1
         self.RequestedShipment.RequestedPackageLineItems.append(package_item)
         package_weight = package_item.Weight.Value
         self.RequestedShipment.TotalWeight.Value += package_weight
